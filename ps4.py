@@ -106,7 +106,7 @@ def build_coder(shift):
         test_dict[alphabet[i]] = alphabet[shift + i]
         if alphabet[i] == ' ':
             break
-        test_dict[alphabet[i].upper()] = alphabet[shift + i].upper()
+        # test_dict[alphabet[i].upper()] = alphabet[shift + i].upper()
     return test_dict
 
 print(build_coder(3))
@@ -133,8 +133,8 @@ def apply_coder(text, coder):
     
     return user_text
 
-print(apply_coder('hello, world',build_encoder(3)))
-print(apply_coder('khoor,czruog', build_decoder(3)))
+print(apply_coder('mynameisalan',build_encoder(3)))
+print(apply_coder('paqdphlvdodq', build_decoder(3)))
         
 
 def apply_shift(text, shift):
