@@ -97,19 +97,15 @@ def get_fable_string():
 # Problem 1: Encryption
 #
 def build_coder(shift):
-    alphabet = list(string.ascii_lowercase)
-    alphabet.append(' ')
-    alphabet.extend(list(string.ascii_lowercase))
+    alphabet = list(string.ascii_lowercase + ' ' + string.ascii_lowercase + ' ')
     test_dict = {}
 
     for i in range(len(alphabet)):
         test_dict[alphabet[i]] = alphabet[shift + i]
         if alphabet[i] == ' ':
             break
-        # test_dict[alphabet[i].upper()] = alphabet[shift + i].upper()
     return test_dict
 
-print(build_coder(3))
 
 def build_encoder(shift):
     return build_coder(shift)
@@ -130,11 +126,11 @@ def apply_coder(text, coder):
             user_text += coder[element]
         else:
             user_text += element # normal letter
-    
+
     return user_text
 
-print(apply_coder('mynameisalan',build_encoder(3)))
-print(apply_coder('paqdphlvdodq', build_decoder(3)))
+print(apply_coder('hey guys my names alan',build_encoder(3)))
+print(apply_coder('khacjxavcpacqdphvcdodq', build_decoder(3)))
         
 
 def apply_shift(text, shift):
