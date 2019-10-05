@@ -96,8 +96,17 @@ def build_coder(shift):
 
     for i in range(len(alphabet)):
         test_dict[alphabet[i]] = alphabet[shift + i]
+        if alphabet[i] == ' ':
+            break
+    
+
+    for i in range(len(upper_alphabet)):
         test_dict[upper_alphabet[i]] = upper_alphabet[shift + i]
-        if alphabet[i] == ' ' or upper_alphabet[i] == ' ':
+
+        if upper_alphabet[i] == ' ':
+            test_dict[' '] = upper_alphabet[shift + i].lower()
+
+        if upper_alphabet[i] == ' ':
             break
     
     return test_dict
@@ -106,8 +115,10 @@ def build_coder(shift):
 def build_encoder(shift):
     return build_coder(shift)
 
+
 def build_decoder(shift):
     return build_coder(-shift)
+
 
 def apply_coder(text, coder):
     """
@@ -125,9 +136,6 @@ def apply_coder(text, coder):
 
     return user_text
 
-print(apply_coder('ALL CAPITAL LETTERS, all lower case letters',build_encoder(3)))
-print(apply_coder('DOOCFDSLWDOCOHWWHUV,CdooCorzhuCfdvhCohwwhuv', build_decoder(3)))
-        
 
 def apply_shift(text, shift):
     """
@@ -146,7 +154,10 @@ def apply_shift(text, shift):
     'Apq hq hiham a.'
     """
     ### TODO.
-   
+    return apply_coder(text, build_encoder(shift))
+
+print(apply_shift('hello, world', 3))
+print(apply_shift('ufhI  hdiva hawhLQm', -3))
 #
 # Problem 2: Codebreaking.
 #
