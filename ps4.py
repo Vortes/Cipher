@@ -29,11 +29,9 @@ wordlist = load_words()
 def is_word(wordlist, word):
     """
     Determines if word is a valid word.
-
     wordlist: list of words in the dictionary.
     word: a possible word.
     returns True if word is in wordlist.
-
     Example:
     >>> is_word(wordlist, 'bat') returns
     True
@@ -47,7 +45,6 @@ def is_word(wordlist, word):
 def random_word(wordlist):
     """
     Returns a random word.
-
     wordlist: list of words  
     returns: a word from wordlist at random
     """
@@ -56,7 +53,6 @@ def random_word(wordlist):
 def random_string(wordlist, n):
     """
     Returns a string containing n random words from wordlist
-
     wordlist: list of words
     returns: a string of random words separated by spaces.
     """
@@ -66,12 +62,9 @@ def random_scrambled(wordlist, n):
     """
     Generates a test string by generating an n-word random string
     and encrypting it with a sequence of random shifts.
-
     wordlist: list of words
     n: number of random words to generate and scamble
     returns: a scrambled string of n random words
-
-
     NOTE:
     This function will ONLY work once you have completed your
     implementation of apply_shifts!
@@ -98,12 +91,15 @@ def get_fable_string():
 #
 def build_coder(shift):
     alphabet = list(string.ascii_lowercase + ' ' + string.ascii_lowercase + ' ')
+    upper_alphabet = list(string.ascii_uppercase + ' ' + string.ascii_uppercase + ' ')
     test_dict = {}
 
     for i in range(len(alphabet)):
         test_dict[alphabet[i]] = alphabet[shift + i]
-        if alphabet[i] == ' ':
+        test_dict[upper_alphabet[i]] = upper_alphabet[shift + i]
+        if alphabet[i] == ' ' or upper_alphabet[i] == ' ':
             break
+    
     return test_dict
 
 
@@ -122,15 +118,15 @@ def apply_coder(text, coder):
 
     user_text = ''
     for element in text:
-        if element in string.ascii_lowercase or element == ' ':
+        if element in string.ascii_lowercase or element == ' ' or element in string.ascii_uppercase:
             user_text += coder[element]
         else:
             user_text += element # normal letter
 
     return user_text
 
-print(apply_coder('hey guys my names alan',build_encoder(3)))
-print(apply_coder('khacjxavcpacqdphvcdodq', build_decoder(3)))
+print(apply_coder('ALL CAPITAL LETTERS, all lower case letters',build_encoder(3)))
+print(apply_coder('DOOCFDSLWDOCOHWWHUV,CdooCorzhuCfdvhCohwwhuv', build_decoder(3)))
         
 
 def apply_shift(text, shift):
@@ -145,7 +141,6 @@ def apply_shift(text, shift):
     text: string to apply the shift to
     shift: amount to shift the text
     returns: text after being shifted by specified amount.
-
     Example:
     >>> apply_shift('This is a test.', 8)
     'Apq hq hiham a.'
@@ -158,10 +153,8 @@ def apply_shift(text, shift):
 def find_best_shift(wordlist, text):
     """
     Decrypts the encoded text and returns the plaintext.
-
     text: string
     returns: 0 <= int 27
-
     Example:
     >>> s = apply_coder('Hello, world!', build_encoder(8))
     >>> s
@@ -179,7 +172,6 @@ def find_best_shift(wordlist, text):
 def apply_shifts(text, shifts):
     """
     Applies a sequence of shifts to an input text.
-
     text: A string to apply the Ceasar shifts to 
     shifts: A list of tuples containing the location each shift should
     begin and the shift offset. Each tuple is of the form (location,
@@ -187,7 +179,6 @@ def apply_shifts(text, shifts):
     starting position all the way through the end of the string.  
     returns: text after applying the shifts to the appropriate
     positions
-
     Example:
     >>> apply_shifts("Do Androids Dream of Electric Sheep?", [(0,6), (3, 18), (12, 16)])
     'JufYkaolfapxQdrnzmasmRyrpfdvpmEurrb?'
@@ -201,10 +192,8 @@ def find_best_shifts(wordlist, text):
     """
     Given a scrambled string, returns a shift key that will decode the text to
     words in wordlist, or None if there is no such key.
-
     Hint: Make use of the recursive function
     find_best_shifts_rec(wordlist, text, start)
-
     wordlist: list of words
     text: scambled text to try to find the words for
     returns: list of tuples.  each tuple is (position in text, amount of shift)
@@ -231,10 +220,8 @@ def find_best_shifts_rec(wordlist, text, start):
     Given a scrambled string and a starting position from which
     to decode, returns a shift key that will decode the text to
     words in wordlist, or None if there is no such key.
-
     Hint: You will find this function much easier to implement
     if you use recursion.
-
     wordlist: list of words
     text: scambled text to try to find the words for
     start: where to start looking at shifts
@@ -248,7 +235,6 @@ def decrypt_fable():
     decrypt the fable given by the function get_fable_string().
     Once you decrypt the message, be sure to include the fable
     as a comment at the end of this problem set.
-
     returns: string - fable in plain text
     """
     ### TODO.
@@ -259,4 +245,3 @@ def decrypt_fable():
 #
 #
 #
-
