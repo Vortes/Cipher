@@ -155,9 +155,7 @@ def apply_shift(text, shift):
     """
     ### TODO.
     return apply_coder(text, build_encoder(shift))
-
-print(apply_shift('hello, world', 3))
-print(apply_shift('ufhI  hdiva hawhLQm', -3))
+    
 #
 # Problem 2: Codebreaking.
 #
