@@ -96,19 +96,14 @@ def build_coder(shift):
 
     for i in range(len(alphabet)):
         test_dict[alphabet[i]] = alphabet[shift + i]
-        if alphabet[i] == ' ':
-            break
-    
-
-    for i in range(len(upper_alphabet)):
         test_dict[upper_alphabet[i]] = upper_alphabet[shift + i]
 
         if upper_alphabet[i] == ' ':
             test_dict[' '] = upper_alphabet[shift + i].lower()
 
-        if upper_alphabet[i] == ' ':
+        if alphabet[i] == ' ' or upper_alphabet[i] == ' ':
             break
-    
+
     return test_dict
 
 
@@ -138,42 +133,34 @@ def apply_coder(text, coder):
 
 
 def apply_shift(text, shift):
-    """
-    Given a text, returns a new text Caesar shifted by the given shift
-    offset. The empty space counts as the 27th letter of the alphabet,
-    so spaces should be replaced by a lowercase letter as appropriate.
-    Otherwise, lower case letters should remain lower case, upper case
-    letters should remain upper case, and all other punctuation should
-    stay as it is.
-    
-    text: string to apply the shift to
-    shift: amount to shift the text
-    returns: text after being shifted by specified amount.
-    Example:
-    >>> apply_shift('This is a test.', 8)
-    'Apq hq hiham a.'
-    """
-    ### TODO.
     return apply_coder(text, build_encoder(shift))
-    
+
+
 #
 # Problem 2: Codebreaking.
 #
+
+
 def find_best_shift(wordlist, text):
     """
-    Decrypts the encoded text and returns the plaintext.
-    text: string
-    returns: 0 <= int 27
-    Example:
-    >>> s = apply_coder('Hello, world!', build_encoder(8))
-    >>> s
-    'Pmttw,hdwztl!'
-    >>>  returns
-    8
-    >>> apply_coder(s, build_decoder(8)) returns
-    'Hello, world!'
+    Basically like finding biggest word. 
+    1. find out if word in test_list
+    2. is steps > most_words then set most_words = steps and the answer to the current shift
     """
-    ### TODO
+
+    most_words = 0
+    answer = 0
+    for shift in range(1, 27):
+        steps = 0
+        test_list = apply_coder(text, build_decoder(shift)).split() # breaks up word into each element in list
+        for word in test_list:
+            if is_word(wordlist, word):
+                steps += 1
+        if steps > most_words:
+            most_words = steps
+            answer = shift
+    return answer
+
    
 #
 # Problem 3: Multi-level encryption.
