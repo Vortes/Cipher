@@ -188,46 +188,27 @@ def apply_shifts(text, shifts):
 # Problem 4: Multi-level decryption.
 #
 def find_best_shifts(wordlist, text):
-    global shifts_list #create a global list called shifts_list. This will store the valid shifts found across recursive calls
+    global shifts_list
     shifts_list = []
-    for shift in range(28): #goes through all possible shifts from 1 to 27
-##        print
-##        print "Current shift: " , shift
-        s = apply_shift(text, shift) #applies the shift to the text (from 0)
-##        print "shifted text(s): %s" % s
-        try: #look to see if the shifted text contains a space (indicates a possible word)
-            space = s.index(' ') #see above
-##            print "Space = " , space
-##            print
-            if is_word(wordlist, s[:space]): #Checks if the text from start of string to the space found is a word
-##                print "Valid word found from position 0 with shift %d" % shift
-                find_best_shifts_rec(wordlist, s, space+1) #calls the recursive function (below), starting at the position just beyond the space (and therefore after the valid word that was found)
-##                print "(OG)Shifts_list just before checking for none:" , shifts_list
-                if None in shifts_list: #Check for none in shifts_list - None indicates that the current shift lead to a dead end somewhere down the line of shifts/decryption
-##                    print "None in shifts_list - clearing shifts_list"
-                    shifts_list = [] #resets shifts_list
-##                    print "About to pass"
-##                    print
-                    pass #passes to next shift in iteration
-                else: #If none is not found in shifts_list, that is good - means the shifts ended up correctly finding the end of a string/sentence and that string/sentence has all valid words
-##                    print "None not found in shifts list"
-                    shifts_list.append((0,shift)) #Appends the first shift (the original that led to correct series of shifts) to shifts_list
-##                    print "Shifts list currently: %s" % shifts_list
-                    shifts_list = shifts_list[::-1] #Shifts have been being added backwards - the last correct shift is added first, and each shift after that is added up the levels of recursion. The result is a valid shifts_list, but in reverse. This simply switches the order
-##                    print "flipped:" , shifts_list
-                    break #breaks out of loop, so that the function can return the correct shifts_list (did this mainly so that the function only has one return line)                 
-        except ValueError: #If initial shift does not find a space, the string/sentence may only have one word, this checks to see if thats the case
-##            print "value error - substring not found"
-            if is_word(wordlist, s): #if the string/sentence with no space is indeed a valid word, that means it really is only one word long
-##                print "End of sentence found"
-                shifts_list.append((0, shift)) #appends this shift to the shifts_list
-                break #breaks out of the loop so that the function can return
-            else: #if the string that has no space is not actually a word, the loop just continues at the next iteration. This 'else' is only here to guide bug checking - it leads to the print statement below.
-##                print "No space and no words"
-                pass #Unnecessary, but put here to easier follow flow, and also to be able to only have to comment out the prints, and not this else statement as well (if you don't, it brings up a syntax error because there is an else statement but the next line of code is not indented under it)
-##    print "Total process about to return: " , shifts_list
-##    print shifts_list
-    return shifts_list #returns the valid shifts_list. Done! 
+    for shift in range(28):
+        s = apply_shift(text, shift)
+        try:
+            space = s.index(' ')
+            if is_word(wordlist, s[:space]):
+                find_best_shifts_rec(wordlist, s, space+1)
+                if None in shifts_list:
+                    shifts_list = []
+                    pass 
+                else: 
+                    shifts_list.append((0,shift)) 
+                    shifts_list = shifts_list[::-1]
+                    break 
+        except ValueError:
+            if is_word(wordlist, s):
+                shifts_list.append((0, shift))
+                break
+
+    return shifts_list
 
 
 def find_best_shifts_rec(wordlist, text, start):
@@ -235,62 +216,35 @@ def find_best_shifts_rec(wordlist, text, start):
     passed_shifts_list = shifts_list[:]
     s_pre = text[:start]
     s_post = text[start:] 
-    for shift in range(28): #goes through all possible shifts
-        s = s_pre + apply_shifts(s_post, [(0, shift)]) #applies current shift to the second segment of the string, the one that is still encrypted
-##        print "Starting at: " , start
-##        print "current shift is: " , shift
-##        print "shifted text(s): %s" % s
-        try: #checks to see if there are any spaces created with the current shift
-            space = s.index(' ', start) #see above
-##            print "Space = " , space
-##            print
-            if is_word(wordlist, s[start:space]):#checks to see if the word from the start parameter to the space that was found is a valid word
-##                print "Recursive function will return: (%s,%s)" % (start, shift)
-##                print "Recursive function about to pass text with start = %d + 1" %space
-                #may want to append here. passed_shifts_list will still be what it was when it passed in, but the next level will have these shifts in it
-                find_best_shifts_rec(wordlist, s, space+1) #Recursively calls this function with a new start parameter, which is one position past where the space (indicating the end of a valid word) was found
-                if None in shifts_list: #When recursive calls have finished, check for None in shifts_list (None indicates that a recursive call came to a dead end)
-##                    print "None in shifts_list:", shifts_list
-##                    print "Resetting shifts_list to what it was at this level of recursion:" , passed_shifts_list
-                    shifts_list = passed_shifts_list[:] #resets shifts_list to what it was at this level of recursion, so that the function can continue checking possible shifts. THIS WAS A BIG BUG - ALIASING. HAVE shifts_list = copy of passed_shifts_list, other wise things get messed up!!!
-##                    print "Shifts_list now equals:" , shifts_list
-##                    print "About to pass"
-##                    print
-                    pass #passes to next shift in the iteration
+    for shift in range(28):
+        s = s_pre + apply_shifts(s_post, [(0, shift)])
+        try:
+            space = s.index(' ', start)
+            if is_word(wordlist, s[start:space]):
+                find_best_shifts_rec(wordlist, s, space+1)
+                if None in shifts_list:
+                    shifts_list = passed_shifts_list[:] 
+                    pass
                 else:
-##                    print "None not found in shifts_list:" , shifts_list
-                    shifts_list.append((start,shift)) #Since None was not found in shifts list, the current (start,shift) is a good shift and is appended to shifts_list (as a tuple)
-                    return #Ends this level of recursion
-        except ValueError: #Prevent a ValueError from stopping the program. This occurs when no space is found in the s.index(). This either indicates a bad shift, or ideally, the end of a string/sentence
-##            print "value error - substring not found"
-            if is_word(wordlist, s[start:]): #Checks to see if the word found from start to the end of the string/sentence is a valid word (which indicates the end of a sentence)
-##                print "End of sentence found"
-##                print
-##                print "Recursive function about to return: (%s,%s)" % (start,shift)
-##                print
-                shifts_list.append((start,shift)) #Since the word was valid, the (start,shift) is appended to shifts_list
-                return #Ends this level of recursion
+                    shifts_list.append((start,shift))
+                    return 
+        except ValueError:
+            if is_word(wordlist, s[start:]):
+                shifts_list.append((start,shift)) 
+                return
             
-##    print "Recursive loop has completed with no words found"
-##    print
-    shifts_list.append(None) #Since no valid shift was found, None is appended to shifts_list so that the next level up knows to continue looking
-    return #End this level of recursion
+    shifts_list.append(None) 
+    return 
 
 
 def decrypt_fable():
-    """
-    Using the methods you created in this problem set,
-    decrypt the fable given by the function get_fable_string().
-    Once you decrypt the message, be sure to include the fable
-    as a comment at the end of this problem set.
-    returns: string - fable in plain text
-    """
-    ### TODO.
     fable = str(get_fable_string())
     shifts = find_best_shifts(wordlist, fable)
     print(apply_shifts(fable, shifts))
 
 decrypt_fable()
+
+
 # What is the fable?
 """
 An Ingenious Man who had built a flying machine invited a great concourse of people to see it go up.
